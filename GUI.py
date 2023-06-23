@@ -368,23 +368,6 @@ def motorPortSelection(event):
             motor_arduino.write("L\n".encode('utf-8'))
             motor_arduino.flush()
 
-#def pumpPortSelection(event):
-#    global pump
-#    global serial_pump
-#    global pressure_arduino
-#    global pressure_arduino_ready
-#    serial_pump = serial.Serial(port=com_pump.get(), baudrate=19200, timeout=.1)
-#    cmd = '%iADR\x0D' % 0
-#    serial_pump.write(cmd.encode())
-#    output = serial_pump.readline().decode()
-#    if len(output) > 0:
-#        pump = 0
-#        pump_run.config(state=NORMAL)
-#        flowrate_entry.config(state=NORMAL)
-#        dia_entry.config(state=NORMAL)
-#    else:
-#        showerror(title="Error", message="No Pump Found")
-
 def pressurePortSelection(event):
     global pressure_arduino
     global pressure_arduino_ready
@@ -425,141 +408,6 @@ def convertHeight():
         manometer_setpoint.configure(state=DISABLED)
     else:
         showerror(title="Error", message="Invalid Manometer Height")
-#def run_pump():
-#    global pump
-#    global serial_pump
-#    global isPumpRunning
-#    syringes = {'1': '4.699',
-#            '3': '8.585',
-#            '5': '11.99',
-#            '10': '14.43',
-#            '20': '19.05',
-#            '30': '21.59',
-#            '60': '26.59'}
-
-#    if not flowrate_entry.get().isdigit():
-#        showerror(title="Error", message="Invalid Flow Rate Input")
-#        return
-
-#    if (not dia_entry.get().isdigit()) or (not dia_entry.get() in syringes.keys()):
-#        showerror(title="Error", message="Invalid Syringe Size Input")
-#        return
-
-#    cmd = '%iDIRINF\x0D' % pump
-#    serial_pump.write(cmd.encode())
-#    output = serial_pump.readline().decode()
-#    if '?' in output:
-#        showerror(title="Error", message=output)
-#        return
-
-#    cmd = ''
-#    fr = float(flowrate_entry.get())
-#    #fr /= 60.0
-#    cmd += str(pump) + 'RAT' + str(fr) + 'UM*' # if erroring out, check here
-#    serial_pump.write(cmd.encode())
-#    output = serial_pump.readline().decode()
-#    if '?' in output:
-#        showerror(title="Error", message=output)
-#        return
-
-#    cmd = ''
-#    dia = float(syringes[dia_entry.get()])
-#    cmd = '%iDIA%s\x0D' % (pump, dia)
-#    serial_pump.write(cmd.encode())
-#    output = serial_pump.readline().decode()
-#    if '?' in output:
-#        showerror(title="Error", message=output)
-#        return
-
-#    cmd = 'iRUN\x0D' % pump
-#    serial_pump.write(cmd.encode())
-#    output = serial_pump.readline().decode()
-#    if '?' in output:
-#        showerror(title="Error", message=output)
-#        pump_stop.config(state=DISABLED)
-#        isPumpRunning = False
-#        return
-#    else:
-#        isPumpRunning = True
-#        pump_stop.config(state=NORMAL)
-#        pump_run.config(state=DISABLED)
-#        flowrate_entry.config(state=DISABLED)
-#        dia_entry.config(state=DISABLED)
-
-#def stop_pump():
-#    global pump
-#    global serial_pump
-#    global isPumpRunning
-#    cmd = 'iSTP\x0D' % pump
-#    serial_pump.write(cmd.encode())
-#    output = serial_pump.readline().decode()
-#    if '?' in output:
-#        showerror(title="Error", message=output)
-#    else:
-#        isPumpRunning = False
-#        pump_stop.config(state=DISABLED)
-#        pump_run.config(state=NORMAL)
-#        flowrate_entry.config(state=NORMAL)
-#        dia_entry.config(state=NORMAL)
-
-#    cmd = '%iRAT0UM\x0D' % pump # sets rate back to 0 uL/hr
-#    serial_pump.write(cmd.encode())
-#    output = serial_pump.readline().decode()
-#    if '?' in output:
-#        showerror(title="Error", message=output)
-
-#def mCF():
-#    global pump
-#    global serial_pump
-#    global pressure_arduino_ready
-#    global pressure_arduino
-#    global isPumpRunning
-    
-#    setpoint = setpoint_entry.get()
-
-#    if (pump != 0) and (not pressure_arduino_ready):
-#        showerror(title='Error', message='No Pump or Transducer Connected')
-#        return
-
-#    if not setpoint.isdigit():
-#        showerror(title='Error', message='Invalid Input')
-
-#    setpoint = int(setpoint)
-#    if (setpoint < 1) or (setpoint > 50):
-#        showerror(title='Error', message='Invalid Input')
-
-#    while (pump == 0) and (pressure_arduino_ready):
-#        currentIOP = int(pressure_arduino.readline().decode('utf-8'))
-#        if isPumpRunning:
-#            if currentIOP >= setpoint+1:
-#                cmd = 'iSTP\x0D' % pump
-#                serial_pump.write(cmd.encode())
-#                output = serial_pump.readline().decode()
-#                if '?' in output:
-#                    showerror(title="Error", message=output)
-#                else:
-#                    isPumpRunning = False
-#                    pump_stop.config(state=DISABLED)
-#                    pump_run.config(state=NORMAL)
-#                    flowrate_entry.config(state=NORMAL)
-#                    dia_entry.config(state=NORMAL)
-#        else:
-#            if currentIOP <= setpoint-1:
-#                cmd = 'iRUN\x0D' % pump
-#                serial_pump.write(cmd.encode())
-#                output = serial_pump.readline().decode()
-#                if '?' in output:
-#                    showerror(title="Error", message=output)
-#                    pump_stop.config(state=DISABLED)
-#                    isPumpRunning = False
-#                    return
-#                else:
-#                    isPumpRunning = True
-#                    pump_stop.config(state=NORMAL)
-#                    pump_run.config(state=DISABLED)
-#                    flowrate_entry.config(state=DISABLED)
-#                    dia_entry.config(state=DISABLED)
-#    return
 
 def exitWindow():
     global streaming
@@ -774,11 +622,6 @@ if ports != []:
                         *ports, command=motorPortSelection)
     com_motor_options.grid(row=1, column=0, padx=5)
 
-    #com_pump.set("Select a COM Port")
-    #com_pump_options = OptionMenu(com_frame, com_pump, 
-    #                *ports, command=pumpPortSelection)
-    #com_pump_options.grid(row=3, column=0, padx=5)
-
     com_pressure.set("Select a COM Port")
     com_pressure_options = OptionMenu(com_frame, com_pressure, 
                     *ports, command=pressurePortSelection)
@@ -861,45 +704,4 @@ in_range = tk_tools.Led(pressure_frame, size=50)
 in_range.grid(row=4, column=0, padx=5, pady=5, rowspan=2)
 in_range.to_grey()
 ############# TRANSDUCER SETTINGS #############
-
-################# PUMP SETTINGS ################
-#pump_frame = Frame(root, width=200, height=400)
-#pump_frame.grid(row=541, column=6, padx=10, pady=5)
-
-#pump_text = Label(pump_frame, text="Pump Settings")
-#pump_text.grid(row=0, column=0, padx=5, pady=5, columnspan=2)
-
-#fr_text = Label(pump_frame, text="Flow Rate (\u03BCL/min)")
-#fr_text.grid(row=1, column=0, padx=5, pady=5)
-
-#flowrate_entry = Entry(pump_frame, state=DISABLED)
-#flowrate_entry.grid(row=2, column=0, padx=5)
-
-#dia_text = Label(pump_frame, text="Syringe Size (mL)")
-#dia_text.grid(row=1, column=1, padx=5, pady=5)
-
-#dia_entry = Entry(pump_frame, state=DISABLED)
-#dia_entry.grid(row=2, column=1, padx=5)
-
-#pump_run = Button(pump_frame, text='Run Pump', state=DISABLED,
-#                          relief=RAISED, command=run_pump)
-#pump_run.grid(row=3, column=0, padx=5, pady=5)
-
-#pump_stop = Button(pump_frame, text='Stop Pump', state=DISABLED,
-#                          relief=RAISED, command=run_pump)
-#pump_stop.grid(row=3, column=1, padx=5, pady=5)
-
-#setpoint_text = Label(pump_frame, text="IOP Setpoint")
-#setpoint_text.grid(row=4, column=0, padx=5, pady=5)
-
-#setpoint_entry = Entry(pump_frame)
-#setpoint_entry.grid(row=5, column=0, padx=5, pady=5)
-
-#monitor_setpoint_btn = Button(pump_frame, text='Monitor Setpoint', 
-#                              relief=RAISED, command=mCF)
-#monitor_setpoint_btn.grid(row=4, column=1, padx=5, pady=5, rowspan=2)
-#if pump == -1:
-#    pump_run.config(state=DISABLED)
-################# PUMP SETTINGS ################
-
 root.mainloop()
